@@ -1,0 +1,3 @@
+public/css/*.css
+node_modules
+.*.swp
