@@ -1,14 +1,38 @@
 {
-    "name": "application-name"
-  , "version": "0.0.1"
-  , "private": true
+    "name": "Boilerplate"
+  , "version": "0.0.2"
+  , "private": false
   , "dependencies": {
       "express": "2.5.5"
     , "stylus": ">= 0.0.1"
     , "jade": ">= 0.0.1"
-	, "connect-assets": "= 2.1.4"
-	, "nib": ">= 0.0.1"
-  , "bootstrap-stylus": ">= 0.0.1"
-  , "coffee-script": ">= 0.0.1"
+  	, "connect-assets": "= 2.1.4"
+  	, "nib": ">= 0.0.1"
+    , "bootstrap-stylus": ">= 0.0.1"
+    , "coffee-script": ">= 0.0.1"
+    , "everyauth": ">=0.0.1"
+    , "mongoose": ">= 0.0.1"
+    , "nodemailer": ">=0.0.1"
+
+    // My Favorites
+    //, "bcrypt": ">=0.0.1"
+    //, "underscore": ">=0.0.1"
+    //, "xml2json": ">=0.0.1"
+
+    // Redis
+    //, "connect-redis": ">= 0.0.1"
+    //, "redis": ">= 0.0.1"
+
+    // Google address lookups
+    //, "geo": ">=0.0.1"
+
+    // Amazon S3 Connector
+    //, "knox": ">=0.0.1"
+    //, "twilio" : ">=0.0.1"
+
+    // Drawing stuff (heroku requires crazy stuff, that's what the second one is for)
+    //, "canvas": ">=0.0.1"
+    //, "canvas": "https://github.com/elspoono/node-canvas-heroku/tarball/master"
+
   }
 }

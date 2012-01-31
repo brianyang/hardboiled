@@ -1,6 +1,8 @@
-#Configuration
+#Modules
 
 express = require 'express'
+nodemailer = require 'nodemailer'
+
 app = module.exports = express.createServer()
 
 #Configuration
@@ -23,12 +25,21 @@ app.configure "development", ->
 app.configure "production", ->
   app.use express.errorHandler()
 
-#Routes
 
+#Mongo Schemas
+
+
+#Routes
 app.get "/", (req, res, next) ->
   res.render 'index',
     req: req
 
 
-app.listen 3000
+
+app.get '*', (req, res, next) ->
+  res.send '',
+    Location:'/'
+  , 302
+
+app.listen process.env.PORT or 4000
 console.log "Express server listening on port %d in %s mode", app.address().port, app.settings.env

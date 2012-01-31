@@ -9,3 +9,5 @@ Boilerplate
 - stylus
 - jade
 - express
+- mongoose
+- nodemailer
