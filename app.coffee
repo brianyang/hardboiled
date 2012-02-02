@@ -149,35 +149,21 @@ mongooseAuth.helpExpress app
 ###
 Mail
 
-Method A) in /etc/launchd.conf
-  setenv SENDGRID_USERNAME your_username
-  setenv SENDGRID_PASSWORD your_password
-  setenv SENDGRID_DOMAIN your_domain
+Example:
 
-Method B) modify below
-  user: process.env.SENDGRID_USERNAME or your_username
-  pass: process.env.SENDGRID_PASSWORD or your_password
-  domain: process.env.SENDGRID_DOMAIN or your_domain
-
+  rest.post 'https://sendgrid.com/api/mail.send.json',
+    data:
+      api_user: process.env.SENDGRID_USERNAME
+      api_key: process.env.SENDGRID_PASSWORD
+      subject: 'Test Email'
+      text: 'This is only a test'
+      to: 'elspoono@gmail.com'
+  .on 'complete', (data, res) ->
+    console.log data
 
 ###
-nodemailer = require 'nodemailer'
+rest = require 'restler'
 
-nodemailer.SMTP = 
-  host: 'smtp.sendgrid.net'
-  port: 25
-  use_authentication: true
-  user: process.env.SENDGRID_USERNAME
-  pass: process.env.SENDGRID_PASSWORD
-  domain: process.env.SENDGRID_DOMAIN
-
-console.log process.env.SENDGRID_USERNAME
-
-nodemailer.send_mail
-  sender: 'help@cards.ly'
-  to: 'elspoono@gmail.com'
-  subject: 'Test Email'
-  body: 'I am just testing this nodemailer thing out.'
 
 ###
 Routes
