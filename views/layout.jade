@@ -2,12 +2,10 @@
 html
   head
     title Boiler | A boilerplate ...
-    != css('lib/app.css')
-    != css('lib/foundation.css')
-    //if LT IE 9
-      != css('lib/ie.css')
+    != css('lib/bootstrap.min.css')
     != css('style')
   body
     != body
     script(src='https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js')
+    != js('lib/bootstrap.min.js')
     != js('main')
