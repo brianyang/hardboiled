@@ -3,7 +3,7 @@ Boilerplate
 
 #What's Included
 
-- foundation
+- twitter bootstrap
 - connect assets
 - coffeescript
 - stylus
