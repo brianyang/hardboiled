@@ -1,6 +1,8 @@
 HardBoiled
 ===
 
+A boilerplate for nodejs apps, optimized for heroku.
+
 #What's Included
 
 - twitter bootstrap
