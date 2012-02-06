@@ -152,14 +152,41 @@ Example:
 ###
 rest = require 'restler'
 
+###
+Middleware
+
+
+###
+must_be_logged_in = (req, res, next) ->
+  if req.user
+    next()
+  else
+    res.send '',
+      'Location': '/'
+    , 302
+
+redirect_if_logged_in = (req, res, next) ->
+  if req.user
+    res.send '',
+      'Location': '/dashboard'
+    , 302
+  else
+    next()
+
 
 ###
 Routes
 
 We pass the "req" object every time to make it easy to add more variables for jade
 ###
-app.get "/", (req, res, next) ->
+app.get "/", redirect_if_logged_in, (req, res, next) ->
   res.render 'index'
+
+app.get "/demo",redirect_if_logged_in, (req, res, next) ->
+  res.render 'demo'
+
+app.get "/dashboard", must_be_logged_in, (req, res, next) ->
+  res.render 'dashboard'
 
 app.get "/logout", (req, res) ->
   req.logout()

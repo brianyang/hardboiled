@@ -1,0 +1,36 @@
+a.btn.btn-navbar(data-toggle='collapse', data-target='.nav-collapse')
+ span.icon-bar
+ span.icon-bar
+ span.icon-bar
+a(href='/').brand Hardboiled
+.nav-collapse
+  - if (everyauth.loggedIn)
+    ul.nav
+      li.active
+        a(href='/dashboard') Dashboard
+    ul.nav.pull-right
+      li
+        p.navbar-text Logged in as 
+          - if (everyauth.user.email)
+            = everyauth.user.email
+          - if (everyauth.facebook)
+            = JSON.stringify(everyauth.facebook.user)
+          - if (everyauth.twitter)
+            = JSON.stringify(everyauth.twitter.user)
+          - if (everyauth.github)
+            = JSON.stringify(everyauth.github.user)
+          - if (everyauth.google)
+            = JSON.stringify(everyauth.google.user)
+      li
+        a(href='/logout') Logout
+  - else
+    ul.nav
+      li.active
+        a(href='/') Home
+      li
+        a(href='/demo') Demo
+    ul.nav.pull-right
+      li
+        a(href='/register') Register
+      li
+        a(href='/login') Login
