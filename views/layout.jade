@@ -1,11 +1,46 @@
-!!!
+<!doctype html>
 html
   head
     title Boiler | A boilerplate ...
     != css('lib/bootstrap.min.css')
     != css('style')
   body
-    != body
+    .navbar
+      .navbar-inner
+        .container
+          a.btn.btn-navbar(data-toggle='collapse', data-target='.nav-collapse')
+           span.icon-bar
+           span.icon-bar
+           span.icon-bar
+          a.brand Hardboiled
+          .nav-collapse
+            ul.nav
+              li.active
+                a(href='/') Home
+              li
+                a(href='/register') Register
+              li
+                a(href='/login') Login
+          - if (everyauth.loggedIn)
+            h2 Authenticated
+            #user-id Logged in with `user.id` #{user.id} - aka `everyauth.user.id` #{everyauth.user.id}
+            - if (everyauth.facebook)
+              h3 Facebook User Data
+              p= JSON.stringify(everyauth.facebook.user)
+            - if (everyauth.twitter)
+              h3 Twitter User Data
+              p= JSON.stringify(everyauth.twitter.user)
+            - if (everyauth.github)
+              h3 GitHub User Data
+              p= JSON.stringify(everyauth.github.user)
+            - if (everyauth.google)
+              h3 Google User Data
+              p= JSON.stringify(everyauth.google.user)
+            - if (everyauth.instagram)
+              h3 Instagram User Data
+              p= JSON.stringify(everyauth.instagram.user)
+    .container
+      != body
     script(src='https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js')
     != js('lib/bootstrap.min.js')
     != js('main')

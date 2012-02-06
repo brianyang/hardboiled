@@ -69,11 +69,6 @@ UserSchema.plugin mongooseAuth,
 
   password:
     loginWith: "email"
-    extraParams:
-      phone: String
-      name:
-        first: String
-        last: String
 
     everyauth:
       getLoginPath: "/login"
@@ -90,13 +85,6 @@ UserSchema.plugin mongooseAuth,
       myHostname: "http://local.host:3000"
       appId: conf.github.appId
       appSecret: conf.github.appSecret
-      redirectPath: "/"
-
-  instagram:
-    everyauth:
-      myHostname: "http://local.host:3000"
-      appId: conf.instagram.clientId
-      appSecret: conf.instagram.clientSecret
       redirectPath: "/"
 
   google:
@@ -171,8 +159,7 @@ Routes
 We pass the "req" object every time to make it easy to add more variables for jade
 ###
 app.get "/", (req, res, next) ->
-  res.render 'index',
-    req: req
+  res.render 'index'
 
 app.get "/logout", (req, res) ->
   req.logout()
