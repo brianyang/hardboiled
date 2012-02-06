@@ -1,6 +1,9 @@
 #= require 'lib/underscore.js'
 
+###
+Defaults
 
+###
 $.ajaxSetup
   type: 'POST'
   contentType: 'application/json'
@@ -8,6 +11,12 @@ $.ajaxSetup
 
 
 $ ->
+
+  ###
+  Navigation
+
+  Make the right link in the navigation "active".
+  ###
   $navbar = $ '.navbar'
   $navbar.each ->
     pathname = document.location.pathname
