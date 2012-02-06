@@ -1,14 +1,39 @@
-h2 Register
-- if ('undefined' !== typeof errors && errors.length)
-  ul#errors
-    - each error in errors
-      li.error= error
-form(action='/register', method='POST')
-  #login
-    label(for=everyauth.password.loginFormFieldName) E-mail
-    input(type='text', name=everyauth.password.loginFormFieldName, value=userParams[everyauth.password.loginFormFieldName])
-  #password
-    label(for=everyauth.password.passwordFormFieldName) Password
-    input(type='password', name=everyauth.password.passwordFormFieldName)
-  #submit
-    input(type='submit') Register
+.navbar
+  .navbar-inner
+    .container
+      a.btn.btn-navbar(data-toggle='collapse', data-target='.nav-collapse')
+       span.icon-bar
+       span.icon-bar
+       span.icon-bar
+      a.brand Hardboiled
+      .nav-collapse
+        ul.nav
+          li
+            a(href='/') Home
+          li.active
+            a(href='/register') Register
+          li
+            a(href='/login') Login
+.container
+  .row
+    form.form-horizontal(action='/register', method='POST')
+      fieldset
+        legend Register
+        - if ('undefined' !== typeof errors && errors.length)
+          .control-group
+            - each error in errors
+              .alert.alert-error.fade.in
+                a.close(data-dismiss='alert',href='#') x
+                strong= error
+        .control-group
+          label.control-label(for=everyauth.password.loginFormFieldName) E-mail
+          .controls
+            input(type='text', name=everyauth.password.loginFormFieldName, value=userParams[everyauth.password.loginFormFieldName])
+            p.help-block something with an @ in it
+        .control-group
+          label.control-label(for=everyauth.password.passwordFormFieldName) Password
+          .controls
+            input(type='password', name=everyauth.password.passwordFormFieldName)
+            p.help-block at least 1 character
+        .form-actions
+          button.btn.btn-primary(type='submit') Register

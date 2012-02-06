@@ -1,13 +1,30 @@
-- if ('undefined' !== typeof errors && errors.length)
-  ul#errors
-    - each error in errors
-      li.error= error
-form(action='/login', method='POST')
-  #login
-    label(for=everyauth.password.loginFormFieldName) E-mail
-    input(type='text', name=everyauth.password.loginFormFieldName, value=email)
-  #password
-    label(for=everyauth.password.passwordFormFieldName) Password
-    input(type='password', name=everyauth.password.passwordFormFieldName)
-  #submit
-    input(type='submit') Login
+.navbar
+  .navbar-inner
+    .container
+      a.btn.btn-navbar(data-toggle='collapse', data-target='.nav-collapse')
+       span.icon-bar
+       span.icon-bar
+       span.icon-bar
+      a.brand Hardboiled
+      .nav-collapse
+        ul.nav
+          li
+            a(href='/') Home
+          li
+            a(href='/register') Register
+          li.active
+            a(href='/login') Login
+.container
+  .row
+    form.well(action='/login', method='POST')
+      - if ('undefined' !== typeof errors && errors.length)
+        - each error in errors
+          .alert.alert-error.fade.in
+            a.close(data-dismiss='alert',href='#') x
+            strong= error
+      label(for=everyauth.password.loginFormFieldName) E-mail
+      input(type='text', name=everyauth.password.loginFormFieldName, value=email)
+      label(for=everyauth.password.passwordFormFieldName) Password
+      input(type='password', name=everyauth.password.passwordFormFieldName)
+      label
+      button.btn(type='submit') Login
