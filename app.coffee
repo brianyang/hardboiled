@@ -1,3 +1,10 @@
+###
+Utilities
+
+underscore, rest
+###
+rest = require 'restler'
+_ = require 'underscore'
 
 ###
 Redis
@@ -117,9 +124,8 @@ app.configure ->
   app.set "views", __dirname + "/views"
   app.set "view engine", "jade"
   app.set 'view options',
-    req: {}
     # Cut off at 60 characters 
-    title: 'Boilerplate | a plate, for boiling'
+    title: 'Hardboiled | a plate, for boiling'
     # Cut off at 140 to 150 characters
     description: 'You should probably update this.'
 
@@ -150,7 +156,6 @@ Example:
     console.log data
 
 ###
-rest = require 'restler'
 
 ###
 Middleware

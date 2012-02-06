@@ -7,12 +7,13 @@ A boilerplate for nodejs apps, optimized for heroku.
 
 - twitter bootstrap
 - connect assets
+- connect redis
 - coffeescript
 - stylus
 - jade
 - express
 - mongoose
-- nodemailer
+- underscore
 
 
 ##Getting Started
@@ -23,3 +24,7 @@ A boilerplate for nodejs apps, optimized for heroku.
 	heroku addons:add redistogo:nano --app your_app_name
 	heroku addons:add mongolab:starter --app your_app_name
 	git push heroku master
+
+##Further reading
+
+http://devcenter.heroku.com/articles/node-js

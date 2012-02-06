@@ -1,8 +1,9 @@
 <!doctype html>
 html
   head
-    title Boiler | A boilerplate ...
-    != css('lib/bootstrap.min.css')
+    title=title
+    meta(name='description', content=description)
+    link(rel='stylesheet', href='/css/lib/bootstrap.min.css')
     != css('style')
   body
     != body
