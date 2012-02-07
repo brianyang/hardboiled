@@ -1,41 +1,50 @@
+!= css('lib/todos.css')
+
 include navbar-fluid
 .container-fluid
   .row-fluid
-    .span3
-      .well.sidebar-nav
-        ul.nav.nav-list
-          li.nav-header Sidebar
-          li.active
-            a(href='#') Link
-          li
-            a(href='#') Link
-          li
-            a(href='#') Link
-          li.nav-header Sidebar
-          li
-            a(href='#') Link
-          li
-            a(href='#') Link
-          li
-            a(href='#') Link
-    .span9
-      .hero-unit
-        h1 Hello, world!
-        p This is a template for a simple marketing or informational website. It includes a large callout called the hero unit and three supporting pieces of content. Use it as a starting point to create something more unique.
-        a(href='/register').btn.btn-primary.btn-large Register &raquo;
-      .row-fluid
-        .span4
-          h2 Heading
-          p Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Etiam porta sem malesuada magna mollis euismod. Donec sed odio dui.
-          p
-            a.btn(href='#') View details &raquo;
-        .span4
-          h2 Heading
-          p Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Etiam porta sem malesuada magna mollis euismod. Donec sed odio dui.
-          p
-            a.btn(href='#') View details &raquo;
-        .span4
-          h2 Heading
-          p Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Etiam porta sem malesuada magna mollis euismod. Donec sed odio dui.
-          p
-            a.btn(href='#') View details &raquo;
+    
+    #todoapp
+      .title
+        h1 Todos
+      .content
+        #create-todo
+          input#new-todo(placeholder='What needs to be done?', type='text')
+          span.ui-tooltip-top(style='display:none') Press Enter to save this task
+        #todos
+          ul#todo-list
+        #todo-stats
+    
+    ul#instructions
+      li Double-click to edit a todo.
+    
+    #credits Created by
+      br
+      a(href='http://jgn.me/') J&eacute;r&ocirc;me Gravel-Niquet
+    
+// Templates
+
+script(type='text/template', id='item-template')
+  .todo(class="<%= done ? 'done' : '' %>")
+    .display
+      input.check(type='checkbox', checked="<%= done ? 'checked : '' %>")
+      .todo-text
+      span.todo-destroy
+
+    .edit
+      input.todo-input(type='text')
+
+script(type='text/template', id='stats-template')
+  | <% if (total) { %>
+  span.todo-count
+    span.number <%= remaining %>
+    span.word <%= remaining == 1 ? 'item' : 'items' %>
+    | left.
+  | <% } %>
+  | <% if (done) { %>
+  span.todo-clear
+    a(href='#') Clear 
+      span.number-done <%= done %>
+      | completed
+      span.word-done <%= done == 1 ? 'item' : 'items' %>
+  | <% } %>
