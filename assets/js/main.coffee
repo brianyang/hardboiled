@@ -1,4 +1,5 @@
 #= require 'lib/underscore.js'
+#= require 'lib/backbone.js'
 
 ###
 Defaults
@@ -15,7 +16,7 @@ $ ->
   ###
   Navigation
 
-  Make the right link in the navigation "active".
+  Make the correct/active link in the navigation "active".
   ###
   $navbar = $ '.navbar'
   $navbar.each ->
