@@ -1,7 +1,6 @@
 #= require 'lib/jquery-1.7.1.min.js'
 #= require 'lib/underscore.js'
-#= require 'lib/backbone.js'
-#= require 'lib/mustache.js'
+#= require 'lib/knockout-2.0.0.js'
 
 ###
 Defaults
