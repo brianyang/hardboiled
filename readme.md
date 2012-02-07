@@ -15,6 +15,7 @@ A boilerplate for nodejs apps, optimized for heroku.
 - mongoose
 - underscore
 - backbone
+- mustache
 
 ##Getting Started
 
