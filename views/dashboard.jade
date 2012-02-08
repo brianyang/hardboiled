@@ -25,26 +25,27 @@ include navbar-fluid
 // Templates
 
 script(type='text/template', id='item-template')
-  .todo(class="<%= done ? 'done' : '' %>")
-    .display
-      input.check(type='checkbox', checked="<%= done ? 'checked : '' %>")
-      .todo-text
-      span.todo-destroy
+  | <div class="todo <%= done ? 'done' : '' %>">
+  .display
+    | <input type="checkbox" class="check" <%= done ? 'checked="checked"' : '' %> />
+    .todo-text
+    span.todo-destroy
 
-    .edit
-      input.todo-input(type='text')
+  .edit
+    input.todo-input(type='text')
+  | </div>
 
 script(type='text/template', id='stats-template')
   | <% if (total) { %>
   span.todo-count
-    span.number <%= remaining %>
-    span.word <%= remaining == 1 ? 'item' : 'items' %>
+    span.number <%= remaining %> 
+    span.word <%= remaining == 1 ? 'item' : 'items' %> 
     | left.
   | <% } %>
   | <% if (done) { %>
   span.todo-clear
     a(href='#') Clear 
-      span.number-done <%= done %>
-      | completed
+      span.number-done <%= done %> 
+      | completed 
       span.word-done <%= done == 1 ? 'item' : 'items' %>
   | <% } %>
