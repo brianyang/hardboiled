@@ -144,92 +144,65 @@ app.configure "production", ->
 mongooseAuth.helpExpress app
 
 ###
-Socket.IO
+NowJS
 
 ###
-sio = require 'socket.io'
-io = sio.listen app
+nowjs = require 'now'
+everyone = nowjs.initialize app
 
-io.set 'log level', 1
-io.set 'transports', ['websocket','xhr-polling']
+nowjs.on 'connect', () ->
 
-# Make sure a valid sessionID is present in the handshake, check it against the session store
-io.set 'authorization', (data, accept) ->
-  if data.headers.cookie and data.headers.cookie.match /connect.sid=[^;]*/
-    data.sessionID = unescape data.headers.cookie.match(/connect.sid=([^;]*)/)[1]
-    session_store.get data.sessionID, (err, session) ->
-      if err or !session
-        accept 'No Session', false
-      else
-        accept null, true
-  else
-    accept 'No Cookie', false
+  owner_id = @.user.cookie['connect.sid']
+  owner_id = @.user.auth.userId if @.user.auth
 
-# The actual socket connect event
-io.sockets.on 'connection', (socket) ->
-  hs = socket.handshake
-  await session_store.get hs.sessionID, defer err, session
-  if session.auth
-    await User.findById session.auth.userId, defer err, user
-    owner_id = user._id
-  else
-    owner_id = hs.sessionID
+  nowjs.getGroup(owner_id).addUser @.user.clientId
+
+nowjs.on 'disconnect', () ->
+
+  owner_id = @.user.cookie['connect.sid']
+  owner_id = @.user.auth.userId if @.user.auth
+
+  nowjs.getGroup(owner_id).removeUser @.user.clientId
+
+everyone.now.Todo = (method, attributes) ->
+
+  owner_id = @.user.cookie['connect.sid']
+  owner_id = @.user.auth.userId if @.user.auth
+
+  group = nowjs.getGroup(owner_id).now
+
+  if method is 'read'
+    await Todo.find
+      owner_id: owner_id
+    , Todo.visible_fields, {}, defer err, todos
+    @.now.read todos
+
+  if method is 'create'
+    todo = new Todo
+      text: attributes.text
+      order: attributes.order
+      done: attributes.done
+      owner_id: owner_id
+    await todo.save defer err
+    @.now.create todo
   
-  console.log owner_id
-    
-
-###
-Mongoose Middleware
-
-###
-get_owner_id = (req, res, next) ->
-  req.owner_id = req.sessionID
-  req.owner_id = req.user._id if req.user
-  next()
-
-
-###
-Mongoose Routes
-
-###
-app.get '/Todo', get_owner_id, (req, res, next) ->
-  Todo.find
-    owner_id: req.owner_id
-  ,Todo.visible_fields,
-    limit: 100
-    sort:
-      order: 1
-  , (err, todos) ->
-    res.send todos
-
-app.post '/Todo', get_owner_id, (req, res, next) ->
-  todo = new Todo
-    text: req.body.text
-    order: req.body.order
-    done: req.body.done
-    owner_id: req.owner_id
-  todo.save (err) ->
-    todo.owner_id = null
-    res.send todo
-
-app.delete '/Todo/:_id', get_owner_id, (req, res, next) ->
-  Todo.findOne
-    _id: req.params._id
-    owner_id: req.owner_id
-  ,Todo.visible_fields, (err, todo) ->
+  if method is 'delete'
+    await Todo.findOne
+      _id: attributes._id
+      owner_id: owner_id
+    , Todo.visible_fields, defer err, todo
     todo.remove()
-    res.send {}
-
-app.put '/Todo/:_id', get_owner_id, (req, res, next) ->
-  Todo.findOne
-    _id: req.params._id
-    owner_id: req.owner_id
-  ,Todo.visible_fields, (err, todo) ->
-    todo.text = req.body.text
-    todo.order = req.body.order
-    todo.done = req.body.done
-    todo.save (err) ->
-      res.send todo
+    @.now.delete todo
+  
+  if method is 'update'
+    await Todo.findOne
+      _id: attributes._id
+      owner_id: owner_id
+    , Todo.visible_fields, defer err, todo
+    for key,value of attributes
+      todo[key] = value
+    await todo.save defer err
+    @.now.update todo
 
 ###
 Mail
