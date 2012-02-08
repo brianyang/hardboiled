@@ -144,12 +144,47 @@ app.configure "production", ->
 mongooseAuth.helpExpress app
 
 ###
+Socket.IO
+
+###
+sio = require 'socket.io'
+io = sio.listen app
+
+io.set 'log level', 1
+io.set 'transports', ['websocket','xhr-polling']
+
+# Make sure a valid sessionID is present in the handshake, check it against the session store
+io.set 'authorization', (data, accept) ->
+  if data.headers.cookie and data.headers.cookie.match /connect.sid=[^;]*/
+    data.sessionID = unescape data.headers.cookie.match(/connect.sid=([^;]*)/)[1]
+    session_store.get data.sessionID, (err, session) ->
+      if err or !session
+        accept 'No Session', false
+      else
+        accept null, true
+  else
+    accept 'No Cookie', false
+
+# The actual socket connect event
+io.sockets.on 'connection', (socket) ->
+  hs = socket.handshake
+  await session_store.get hs.sessionID, defer err, session
+  if session.auth
+    await User.findById session.auth.userId, defer err, user
+    owner_id = user._id
+  else
+    owner_id = hs.sessionID
+  
+  console.log owner_id
+    
+
+###
 Mongoose Middleware
 
 ###
-get_uid = (req, res, next) ->
-  req.uid = req.sessionID
-  req.uid = req.user._id if req.user
+get_owner_id = (req, res, next) ->
+  req.owner_id = req.sessionID
+  req.owner_id = req.user._id if req.user
   next()
 
 
@@ -157,9 +192,9 @@ get_uid = (req, res, next) ->
 Mongoose Routes
 
 ###
-app.get '/Todo', get_uid, (req, res, next) ->
+app.get '/Todo', get_owner_id, (req, res, next) ->
   Todo.find
-    owner_id: req.uid
+    owner_id: req.owner_id
   ,Todo.visible_fields,
     limit: 100
     sort:
@@ -167,28 +202,28 @@ app.get '/Todo', get_uid, (req, res, next) ->
   , (err, todos) ->
     res.send todos
 
-app.post '/Todo', get_uid, (req, res, next) ->
+app.post '/Todo', get_owner_id, (req, res, next) ->
   todo = new Todo
     text: req.body.text
     order: req.body.order
     done: req.body.done
-    owner_id: req.uid
+    owner_id: req.owner_id
   todo.save (err) ->
     todo.owner_id = null
     res.send todo
 
-app.delete '/Todo/:_id', get_uid, (req, res, next) ->
+app.delete '/Todo/:_id', get_owner_id, (req, res, next) ->
   Todo.findOne
     _id: req.params._id
-    owner_id: req.uid
+    owner_id: req.owner_id
   ,Todo.visible_fields, (err, todo) ->
     todo.remove()
     res.send {}
 
-app.put '/Todo/:_id', get_uid, (req, res, next) ->
+app.put '/Todo/:_id', get_owner_id, (req, res, next) ->
   Todo.findOne
     _id: req.params._id
-    owner_id: req.uid
+    owner_id: req.owner_id
   ,Todo.visible_fields, (err, todo) ->
     todo.text = req.body.text
     todo.order = req.body.order
