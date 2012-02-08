@@ -39,6 +39,8 @@ $ ->
 
   ###
   window.Todo = Backbone.Model.extend(
+    idAttribute: "_id"
+
     defaults: ->
       done: false
       order: Todos.nextOrder()
@@ -48,7 +50,7 @@ $ ->
   )
   window.TodoList = Backbone.Collection.extend(
     model: Todo
-    url: '/todo'
+    url: '/Todo'
     done: ->
       @filter (todo) ->
         todo.get "done"

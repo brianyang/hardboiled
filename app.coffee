@@ -1,34 +1,16 @@
 ###
 Utilities
 
-underscore, rest
+underscore, restler
 ###
-rest = require 'restler'
+restler = require 'restler'
 _ = require 'underscore'
 
-###
-Redis
-
-Used for storing session data perhaps?
-###
-connect = require 'connect'
-redis_store = require('connect-redis') connect
-
-redis_options =
-  host: 'localhost'
-  port: 6379
-
-if process.env.REDISTOGO_URL
-  redis_options = 
-    host: process.env.REDISTOGO_URL.replace /.*@([^:]*).*/ig, '$1'
-    port: process.env.REDISTOGO_URL.replace /.*@.*:([^\/]*).*/ig, '$1'
-    pass: process.env.REDISTOGO_URL.replace /.*:.*:(.*)@.*/ig, '$1'
-
-session_store = new redis_store redis_options
 
 ###
 Mongo
 
+Getting mongoose started
 ###
 mongoose = require 'mongoose'
 
@@ -39,12 +21,33 @@ mongoose.connect db_uri
 Schema = mongoose.Schema
 ObjectId = mongoose.SchemaTypes.ObjectId
 
+TodoSchema = new Schema
+  owner_id: String
+  text: String
+  order: Number
+  done: Boolean
+Todo = mongoose.model 'Todo', TodoSchema
+
+Todo.visible_fields = ['text', 'order', 'done']
+
 UserSchema = new Schema({})
 
+###
+Mongo Store
+
+For all session data
+###
+mongostore = require 'connect-mongo'
+
+session_store = new mongostore
+  url: db_uri
 
 ###
 Mongoose Auth
 
+For the auth session data.
+- accessible in jade templates as everyauth
+- accessible in express routes as req.user
 ###
 conf = require './conf'
 everyauth = require 'everyauth'
@@ -141,11 +144,63 @@ app.configure "production", ->
 mongooseAuth.helpExpress app
 
 ###
+Mongoose Middleware
+
+###
+get_uid = (req, res, next) ->
+  req.uid = req.sessionID
+  req.uid = req.user._id if req.user
+  next()
+
+
+###
+Mongoose Routes
+
+###
+app.get '/Todo', get_uid, (req, res, next) ->
+  Todo.find
+    owner_id: req.uid
+  ,Todo.visible_fields,
+    limit: 100
+    sort:
+      order: 1
+  , (err, todos) ->
+    res.send todos
+
+app.post '/Todo', get_uid, (req, res, next) ->
+  todo = new Todo
+    text: req.body.text
+    order: req.body.order
+    done: req.body.done
+    owner_id: req.uid
+  todo.save (err) ->
+    todo.owner_id = null
+    res.send todo
+
+app.delete '/Todo/:_id', get_uid, (req, res, next) ->
+  Todo.findOne
+    _id: req.params._id
+    owner_id: req.uid
+  ,Todo.visible_fields, (err, todo) ->
+    todo.remove()
+    res.send {}
+
+app.put '/Todo/:_id', get_uid, (req, res, next) ->
+  Todo.findOne
+    _id: req.params._id
+    owner_id: req.uid
+  ,Todo.visible_fields, (err, todo) ->
+    todo.text = req.body.text
+    todo.order = req.body.order
+    todo.done = req.body.done
+    todo.save (err) ->
+      res.send todo
+
+###
 Mail
 
-Example:
-
-  rest.post 'https://sendgrid.com/api/mail.send.json',
+SendGrid Example:
+  restler.post 'https://sendgrid.com/api/mail.send.json',
     data:
       api_user: process.env.SENDGRID_USERNAME
       api_key: process.env.SENDGRID_PASSWORD
@@ -158,8 +213,7 @@ Example:
 ###
 
 ###
-Middleware
-
+Jade Middleware
 
 ###
 must_be_logged_in = (req, res, next) ->
@@ -180,7 +234,7 @@ redirect_if_logged_in = (req, res, next) ->
 
 
 ###
-Routes
+Jade Routes
 
 We pass the "req" object every time to make it easy to add more variables for jade
 ###
@@ -196,11 +250,6 @@ app.get "/dashboard", must_be_logged_in, (req, res, next) ->
 app.get "/logout", (req, res) ->
   req.logout()
   res.redirect "/"
-
-app.get '*', (req, res, next) ->
-  res.send '',
-    Location:'/'
-  , 302
 
 ###
 Wrap Up
