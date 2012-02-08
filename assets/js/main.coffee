@@ -43,6 +43,22 @@ $ ->
   $todoapp = $ '#todoapp'
   if $todoapp.length
 
+    TodoSync = (method, model, options) ->
+      now.ready () ->
+        now.Todo method, model.attributes
+
+      now.read = (todos) ->
+        options.success todos
+
+      now.create = (todo) ->
+        options.success todo
+      
+      now.delete = (todo) ->
+        options.success todo
+      
+      now.update = (todo) ->
+        options.success todo
+
     window.Todo = Backbone.Model.extend
       idAttribute: "_id"
 
@@ -52,12 +68,11 @@ $ ->
 
       toggle: ->
         @save done: not @get("done")
+      
+      sync: TodoSync
     
     window.TodoList = Backbone.Collection.extend
       model: Todo
-      
-      url: '/Todo'
-
       done: ->
         @filter (todo) ->
           todo.get "done"
@@ -71,7 +86,10 @@ $ ->
 
       comparator: (todo) ->
         todo.get "order"
+      
+      sync: TodoSync
     
+    window.Todos = new TodoList
     window.TodoView = Backbone.View.extend
       tagName: "li"
       template: _.template($("#item-template").html())
@@ -167,11 +185,5 @@ $ ->
           tooltip.show().fadeIn()
 
         @tooltipTimeout = _.delay(show, 1000)
-
-    now.ready () ->
-        
-      unless window.Todos
-        window.Todos = new TodoList
-        window.App = new AppView
-      
-      now.Todo_update()
+    
+    window.App = new AppView
