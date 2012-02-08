@@ -164,45 +164,69 @@ nowjs.on 'disconnect', () ->
 
   nowjs.getGroup(owner_id).removeUser @.user.clientId
 
-everyone.now.Todo = (method, attributes) ->
+everyone.now.Todo_update = (method, attributes) ->
 
   owner_id = @.user.cookie['connect.sid']
-  owner_id = @.user.auth.userId if @.user.auth
+  owner_id = @.user.session.auth.userId if @.user.session.auth
 
   group = nowjs.getGroup(owner_id).now
 
-  if method is 'read'
-    await Todo.find
-      owner_id: owner_id
-    , Todo.visible_fields, {}, defer err, todos
-    @.now.read todos
+  console.log owner_id
+    
 
-  if method is 'create'
-    todo = new Todo
-      text: attributes.text
-      order: attributes.order
-      done: attributes.done
-      owner_id: owner_id
-    await todo.save defer err
-    @.now.create todo
-  
-  if method is 'delete'
-    await Todo.findOne
-      _id: attributes._id
-      owner_id: owner_id
-    , Todo.visible_fields, defer err, todo
+###
+Mongoose Middleware
+
+###
+get_owner_id = (req, res, next) ->
+  req.owner_id = req.sessionID
+  req.owner_id = req.session.auth.userId if req.user
+  console.log req.owner_id
+  next()
+
+
+###
+Mongoose Routes
+
+###
+app.get '/Todo', get_owner_id, (req, res, next) ->
+  Todo.find
+    owner_id: req.owner_id
+  ,Todo.visible_fields,
+    limit: 100
+    sort:
+      order: 1
+  , (err, todos) ->
+    res.send todos
+
+app.post '/Todo', get_owner_id, (req, res, next) ->
+  todo = new Todo
+    text: req.body.text
+    order: req.body.order
+    done: req.body.done
+    owner_id: req.owner_id
+  todo.save (err) ->
+    todo.owner_id = null
+    res.send todo
+
+app.delete '/Todo/:_id', get_owner_id, (req, res, next) ->
+  Todo.findOne
+    _id: req.params._id
+    owner_id: req.owner_id
+  ,Todo.visible_fields, (err, todo) ->
     todo.remove()
-    @.now.delete todo
-  
-  if method is 'update'
-    await Todo.findOne
-      _id: attributes._id
-      owner_id: owner_id
-    , Todo.visible_fields, defer err, todo
-    for key,value of attributes
-      todo[key] = value
-    await todo.save defer err
-    @.now.update todo
+    res.send {}
+
+app.put '/Todo/:_id', get_owner_id, (req, res, next) ->
+  Todo.findOne
+    _id: req.params._id
+    owner_id: req.owner_id
+  ,Todo.visible_fields, (err, todo) ->
+    todo.text = req.body.text
+    todo.order = req.body.order
+    todo.done = req.body.done
+    todo.save (err) ->
+      res.send todo
 
 ###
 Mail
