@@ -150,32 +150,24 @@ NowJS
 nowjs = require 'now'
 everyone = nowjs.initialize app
 
+get_owner_id = (from_user) -> if from_user.session and from_user.session.auth then from_user.session.auth.userId else from_user.cookie['connect.sid']
+
 nowjs.on 'connect', () ->
-
-  owner_id = @.user.cookie['connect.sid']
-  owner_id = @.user.auth.userId if @.user.auth
-
-  nowjs.getGroup(owner_id).addUser @.user.clientId
+  nowjs.getGroup(get_owner_id @.user).addUser @.user.clientId
 
 nowjs.on 'disconnect', () ->
+  nowjs.getGroup(get_owner_id @.user).removeUser @.user.clientId
 
-  owner_id = @.user.cookie['connect.sid']
-  owner_id = @.user.auth.userId if @.user.auth
-
-  nowjs.getGroup(owner_id).removeUser @.user.clientId
-
-everyone.now.Todo = (method, attributes) ->
-
-  owner_id = @.user.cookie['connect.sid']
-  owner_id = @.user.auth.userId if @.user.auth
-
-  group = nowjs.getGroup(owner_id).now
+everyone.now.Todo_call = (method, attributes, next) ->
+  owner_id = get_owner_id @.user
+  group = nowjs.getGroup owner_id
+  others = group.exclude @.user.clientId
 
   if method is 'read'
     await Todo.find
       owner_id: owner_id
     , Todo.visible_fields, {}, defer err, todos
-    @.now.read todos
+    next todos
 
   if method is 'create'
     todo = new Todo
@@ -184,15 +176,18 @@ everyone.now.Todo = (method, attributes) ->
       done: attributes.done
       owner_id: owner_id
     await todo.save defer err
-    @.now.create todo
+    others.now.Todo_add todo
+    next todo
   
   if method is 'delete'
     await Todo.findOne
       _id: attributes._id
       owner_id: owner_id
     , Todo.visible_fields, defer err, todo
-    todo.remove()
-    @.now.delete todo
+    if todo
+      todo.remove()
+      others.now.Todo_remove todo
+      next todo
   
   if method is 'update'
     await Todo.findOne
@@ -202,7 +197,8 @@ everyone.now.Todo = (method, attributes) ->
     for key,value of attributes
       todo[key] = value
     await todo.save defer err
-    @.now.update todo
+    others.now.Todo_set todo
+    next todo
 
 ###
 Mail
