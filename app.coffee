@@ -144,37 +144,33 @@ app.configure "production", ->
 mongooseAuth.helpExpress app
 
 ###
-Socket.IO
+NowJS
 
 ###
-sio = require 'socket.io'
-io = sio.listen app
+nowjs = require 'now'
+everyone = nowjs.initialize app
 
-io.set 'log level', 1
-io.set 'transports', ['websocket','xhr-polling']
+nowjs.on 'connect', () ->
 
-# Make sure a valid sessionID is present in the handshake, check it against the session store
-io.set 'authorization', (data, accept) ->
-  if data.headers.cookie and data.headers.cookie.match /connect.sid=[^;]*/
-    data.sessionID = unescape data.headers.cookie.match(/connect.sid=([^;]*)/)[1]
-    session_store.get data.sessionID, (err, session) ->
-      if err or !session
-        accept 'No Session', false
-      else
-        accept null, true
-  else
-    accept 'No Cookie', false
+  owner_id = @.user.cookie['connect.sid']
+  owner_id = @.user.auth.userId if @.user.auth
 
-# The actual socket connect event
-io.sockets.on 'connection', (socket) ->
-  hs = socket.handshake
-  await session_store.get hs.sessionID, defer err, session
-  if session.auth
-    await User.findById session.auth.userId, defer err, user
-    owner_id = user._id
-  else
-    owner_id = hs.sessionID
-  
+  nowjs.getGroup(owner_id).addUser @.user.clientId
+
+nowjs.on 'disconnect', () ->
+
+  owner_id = @.user.cookie['connect.sid']
+  owner_id = @.user.auth.userId if @.user.auth
+
+  nowjs.getGroup(owner_id).removeUser @.user.clientId
+
+everyone.now.Todo_update = (method, attributes) ->
+
+  owner_id = @.user.cookie['connect.sid']
+  owner_id = @.user.session.auth.userId if @.user.session.auth
+
+  group = nowjs.getGroup(owner_id).now
+
   console.log owner_id
     
 
@@ -184,7 +180,8 @@ Mongoose Middleware
 ###
 get_owner_id = (req, res, next) ->
   req.owner_id = req.sessionID
-  req.owner_id = req.user._id if req.user
+  req.owner_id = req.session.auth.userId if req.user
+  console.log req.owner_id
   next()
 
 

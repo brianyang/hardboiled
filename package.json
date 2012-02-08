@@ -1,6 +1,6 @@
 {
   "name": "Hardboiled",
-  "version": "0.0.4-1",
+  "version": "0.0.4-2",
   "private": false,
   "engines": {
     "node": ">=0.6.0"
@@ -20,7 +20,7 @@
     "underscore": ">=0.0.1",
     "twilio": ">=0.0.1",
     "restler": ">=0.0.1",
-    "socket.io": ">=0.0.1"
+    "now": ">=0.0.1"
   },
   "subdomain": "Hardboiled",
   "scripts": {

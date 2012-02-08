@@ -12,15 +12,6 @@ $.ajaxSetup
   contentType: 'application/json'
 
 ###
-Socket.IO
-
-###
-socket = io.connect()
-
-socket.on 'connect', () ->
-  console.log 1
-
-###
 jQuery Document Ready
 
 Anything that messes with the dom needs to start after here
@@ -47,9 +38,12 @@ $ ->
   Todo list
 
   ###
+
+
   $todoapp = $ '#todoapp'
   if $todoapp.length
-    window.Todo = Backbone.Model.extend(
+
+    window.Todo = Backbone.Model.extend
       idAttribute: "_id"
 
       defaults: ->
@@ -58,10 +52,12 @@ $ ->
 
       toggle: ->
         @save done: not @get("done")
-    )
-    window.TodoList = Backbone.Collection.extend(
+    
+    window.TodoList = Backbone.Collection.extend
       model: Todo
+      
       url: '/Todo'
+
       done: ->
         @filter (todo) ->
           todo.get "done"
@@ -75,9 +71,8 @@ $ ->
 
       comparator: (todo) ->
         todo.get "order"
-    )
-    window.Todos = new TodoList
-    window.TodoView = Backbone.View.extend(
+    
+    window.TodoView = Backbone.View.extend
       tagName: "li"
       template: _.template($("#item-template").html())
       events:
@@ -120,8 +115,8 @@ $ ->
 
       clear: ->
         @model.destroy()
-    )
-    window.AppView = Backbone.View.extend(
+    
+    window.AppView = Backbone.View.extend
       el: $todoapp
       statsTemplate: _.template($("#stats-template").html())
       events:
@@ -172,5 +167,11 @@ $ ->
           tooltip.show().fadeIn()
 
         @tooltipTimeout = _.delay(show, 1000)
-    )
-    window.App = new AppView
+
+    now.ready () ->
+        
+      unless window.Todos
+        window.Todos = new TodoList
+        window.App = new AppView
+      
+      now.Todo_update()
