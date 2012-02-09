@@ -11,7 +11,12 @@ a(href='/').brand Hardboiled
     ul.nav.pull-right
       li
         p.navbar-text Logged in as 
-          = JSON.stringify(everyauth)
+          - if (everyauth.twitter)
+            ='@'+everyauth.twitter.user.screen_name
+          - else if (everyauth.user.email)
+            = everyauth.user.email
+          - else if (everyauth.user.name)
+            = everyauth.user.name
       li
         a(href='/logout') Logout
   - else

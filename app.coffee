@@ -32,7 +32,7 @@ Todo.visible_fields = ['text', 'order', 'done']
 
 UserSchema = new Schema
   provider: String
-  id: String
+  pid: String
   email: String
   name: String
 
@@ -54,9 +54,9 @@ Everyauth
 ###
 everyauth = require 'everyauth'
 findOrCreateUser = (promise, user) ->
-  User.find
+  User.findOne
     provider: user.provider
-    id: user.id
+    pid: user.id
   , (err, found_user) ->
     if err
       promise.fail err
@@ -64,7 +64,7 @@ findOrCreateUser = (promise, user) ->
       promise.fulfill found_user
     else
       new_user = new User user
-      user.save (err, saved_user) ->
+      new_user.save (err, saved_user) ->
         if err
           promise.fail err
         else
@@ -77,7 +77,7 @@ everyauth.openid.myHostname('http://local.host:3000').redirectPath('/').findOrCr
   promise = this.Promise()
   findOrCreateUser promise,
     provider: 'openid'
-    id: userMetadata.claimedIdentifier
+    pid: userMetadata.claimedIdentifier
     email: userMetadata.email
     name: userMetadata.fullname
   promise
@@ -86,7 +86,7 @@ everyauth.facebook.appId(conf.fb.appId).appSecret(conf.fb.appSecret).redirectPat
   promise = this.Promise()
   findOrCreateUser promise,
     provider: 'fb'
-    id: fbUserMetadata.id
+    pid: fbUserMetadata.id
     email: fbUserMetadata.email
     name: fbUserMetadata.name
   promise
@@ -95,15 +95,15 @@ everyauth.twitter.consumerKey(conf.twit.consumerKey).consumerSecret(conf.twit.co
   promise = this.Promise()
   findOrCreateUser promise,
     provider: 'twit'
-    id: twitUser.id
-    name: twitUser.screen_name
+    pid: twitUser.id
+    name: twitUser.name
   promise
 
 everyauth.github.appId(conf.github.appId).appSecret(conf.github.appSecret).redirectPath('/').findOrCreateUser (sess, accessToken, accessTokenExtra, ghUser) ->
   promise = this.Promise()
   findOrCreateUser promise,
     provider: 'github'
-    id: ghUser.id
+    pid: ghUser.id
     email: ghUser.email
     name: ghUser.name
   promise
@@ -112,7 +112,7 @@ everyauth.instagram.appId(conf.instagram.clientId).appSecret(conf.instagram.clie
   promise = this.Promise()
   findOrCreateUser promise,
     provider: 'instagram'
-    id: hipster.id
+    pid: hipster.id
     email: hipster.email
     name: hipster.name
   promise
@@ -134,7 +134,7 @@ everyauth.google.fetchOAuthUser((accessToken) ->
   promise = this.Promise()
   findOrCreateUser promise,
     provider: 'google'
-    id: googleUser.id
+    pid: googleUser.id
     email: googleUser.email
   promise
 
@@ -142,7 +142,7 @@ everyauth.readability.consumerKey(conf.readability.consumerKey).consumerSecret(c
   promise = this.Promise()
   findOrCreateUser promise,
     provider: 'readability'
-    id: reader.username
+    pid: reader.username
     name: reader.first_name + ' ' + reader.last_name
   promise
 
@@ -151,7 +151,7 @@ everyauth.linkedin.consumerKey(conf.linkedin.apiKey).consumerSecret(conf.linkedi
   promise = this.Promise()
   findOrCreateUser promise,
     provider: 'linkedin'
-    id: linkedinUser.id
+    pid: linkedinUser.id
     name: linkedinUser.firsName + ' ' + linkedinUser.lastName
     email: linkedinUser.email
   promise
@@ -160,7 +160,7 @@ everyauth.dropbox.consumerKey(conf.dropbox.consumerKey).consumerSecret(conf.drop
   promise = this.Promise()
   findOrCreateUser promise,
     provider: 'dropbox'
-    id: dropboxUserMetadata.uid
+    pid: dropboxUserMetadata.uid
     name: dropboxUserMetadata.display_name
   promise
 
@@ -168,7 +168,7 @@ everyauth.tumblr.consumerKey(conf.tumblr.consumerKey).consumerSecret(conf.tumblr
   promise = this.Promise()
   findOrCreateUser promise,
     provider: 'tumblr'
-    id: tumblrUser.name
+    pid: tumblrUser.name
     name: tumblrUser.name
   promise
 
@@ -176,7 +176,7 @@ everyauth.box.apiKey(conf.box.apiKey).redirectPath('/').findOrCreateUser (sess, 
   promise = this.Promise()
   findOrCreateUser promise,
     provider: 'box'
-    id: boxUser.id
+    pid: boxUser.id
     email: boxUser.user_email
   promise
 
@@ -184,7 +184,7 @@ everyauth.evernote.oauthHost(conf.evernote.oauthHost).consumerKey(conf.evernote.
   promise = this.Promise()
   findOrCreateUser promise,
     provider: 'evernote'
-    id: enUserMetadata.userId
+    pid: enUserMetadata.userId
     name: enUserMetadata.userId
   promise
 
