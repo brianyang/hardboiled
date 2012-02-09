@@ -39,11 +39,9 @@ $ ->
 
   ###
   $todoapp = $ '#todoapp'
-  if $todoapp.length
-    $todoapp.find('div').tooltip
-      placement: 'left'
-    TodoSync = (method, model, options) ->
 
+  if $todoapp.length
+    TodoSync = (method, model, options) ->
       now.Todo_call method, model.attributes, (result) ->
         options.success result
 
@@ -112,7 +110,7 @@ $ ->
         $(@el).removeClass "editing"
 
       updateOnEnter: (e) ->
-        @close()  if e.keyCode is 13
+        @close() if e.keyCode is 13
 
       remove: ->
         $(@el).remove()
