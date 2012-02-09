@@ -8,7 +8,10 @@ include navbar-fluid
       #todos
         table.table.table-striped.table-condensed#todo-list
       #create-todo
-        input.span6#new-todo(placeholder='What needs to be done?', type='text')
+        .input-prepend
+          span.add-on
+            i.icon-pencil
+          input.span6#new-todo(placeholder='What needs to be done?', type='text')
       #todo-stats
     
 // Templates
@@ -16,7 +19,6 @@ include navbar-fluid
 script(type='text/html', id='item_template')
   td.span1
     | <input class="check" type="checkbox" {{#done}}checked="checked"{{/done}} />
-    label
   td.span9.todo(class="{{#done}}done{{/done}}")
     .display
       .todo-text
