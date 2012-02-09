@@ -1,46 +1,42 @@
 include navbar-fluid
 .container-fluid#todoapp
   .row-fluid
-    .span12
+    .span6
       .hero-unit
-        .title
-          h1 Todos
-  .row-fluid
-    .span3
-      #create-todo
-        input#new-todo(placeholder='What needs to be done?', type='text')
-        span.ui-tooltip-top(style='display:none') Press Enter to save this task
-    .span9
+        h1 Todos
+    .span6
       #todos
-        #todo-list
+        table.table.table-striped.table-condensed#todo-list
+      #create-todo
+        input.span6#new-todo(placeholder='What needs to be done?', type='text')
       #todo-stats
     
 // Templates
 
 script(type='text/html', id='item_template')
-  .row-fluid.todo(class="{{#done}}done{{/done}}")
+  td.span1
+    | <input class="check" type="checkbox" {{#done}}checked="checked"{{/done}} />
+    label
+  td.span9.todo(class="{{#done}}done{{/done}}")
     .display
-      .span1
-        | <input class="check" type="checkbox" {{#done}}checked="checked"{{/done}} />
-      .span7
-        .todo-text
-      .span1
-        span.todo-destroy
-
+      .todo-text
     .edit
       input.todo-input(type='text')
+  td.span1
+    a.close.todo-destroy &times;
 
 script(type='text/html', id='stats_template')
-  | {{#total}}
-  span.todo-count
-    span.number {{remaining}} 
-    span.word {{total_word}} 
-    | left.
-  | {{/total}}
-  | {{#done}}
-  span.todo-clear
-    a(href='#') Clear 
-      span.number-done {{done}} 
-      | completed 
-      span.word-done {{done_word}} 
-  | {{/done}}
+  .row-fluid
+    | {{#done}}
+    .todo-clear.span6
+      a(href='#') Clear 
+        span.number-done {{done}} 
+        | completed 
+        span.word-done {{done_word}} 
+    | {{/done}}
+    | {{#total}}
+    .todo-count.span6
+      span.number {{remaining}} 
+      span.word {{total_word}} 
+      | left.
+    | {{/total}}

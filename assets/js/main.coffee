@@ -38,11 +38,10 @@ $ ->
   Todo list
 
   ###
-
-
   $todoapp = $ '#todoapp'
   if $todoapp.length
-
+    $todoapp.find('div').tooltip
+      placement: 'left'
     TodoSync = (method, model, options) ->
 
       now.Todo_call method, model.attributes, (result) ->
@@ -79,11 +78,11 @@ $ ->
       sync: TodoSync
     
     window.TodoView = Backbone.View.extend
-      tagName: "div"
+      tagName: "tr"
       events:
         "click .check": "toggleDone"
-        "dblclick div.todo-text": "edit"
-        "click span.todo-destroy": "clear"
+        "dblclick .todo-text": "edit"
+        "click .todo-destroy": "clear"
         "keypress .todo-input": "updateOnEnter"
 
       initialize: ->
@@ -125,8 +124,7 @@ $ ->
       el: $todoapp
       events:
         "keypress #new-todo": "createOnEnter"
-        "keyup #new-todo": "showTooltip"
-        "click .todo-clear a": "clearCompleted"
+        "click .todo-clear": "clearCompleted"
 
       initialize: ->
         @input = @$("#new-todo")
@@ -161,17 +159,6 @@ $ ->
           todo.destroy()
 
         false
-
-      showTooltip: (e) ->
-        tooltip = @$(".ui-tooltip-top")
-        val = @input.val()
-        tooltip.fadeOut()
-        clearTimeout @tooltipTimeout  if @tooltipTimeout
-        return  if val is "" or val is @input.attr("placeholder")
-        show = ->
-          tooltip.show().fadeIn()
-
-        @tooltipTimeout = _.delay(show, 1000)
     
     now.ready () ->
 
