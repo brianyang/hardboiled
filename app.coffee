@@ -330,10 +330,12 @@ app.get "/", redirect_if_logged_in, (req, res, next) ->
   res.render 'index'
 
 app.get "/demo",redirect_if_logged_in, (req, res, next) ->
-  res.render 'dashboard'
+  res.render 'dashboard',
+    layout: 'layout-fluid'
 
 app.get "/dashboard", must_be_logged_in, (req, res, next) ->
-  res.render 'dashboard'
+  res.render 'dashboard',
+    layout: 'layout-fluid'
 
 ###
 Wrap Up

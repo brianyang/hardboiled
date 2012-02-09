@@ -25,6 +25,16 @@ a(href='/').brand Hardboiled
         a(href='/') Home
       li
         a(href='/demo') Demo
-    ul.nav.pull-right
-      li
-        a(href='#') Login
+    ul.nav.pull-right.pills
+      li.dropdown#login-menu
+        a.dropdown-toggle(href='#login-menu', data-toggle='dropdown') Login
+          b.caret
+        ul.dropdown-menu
+          li
+            a(href='/auth/facebook') facebook
+          li
+            a(href='/auth/twitter') twitter
+          li
+            a(href='/auth/github') github
+          li
+            a(href='/auth/google') google
