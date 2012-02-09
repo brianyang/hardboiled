@@ -1,7 +1,7 @@
 #= require 'lib/jquery-1.7.1.min.js'
 #= require 'lib/underscore.js'
 #= require 'lib/backbone.js'
-#= require 'lib/mustache.js'
+#= require 'lib/icanhaz.js'
 
 ###
 Defaults
@@ -79,8 +79,7 @@ $ ->
       sync: TodoSync
     
     window.TodoView = Backbone.View.extend
-      tagName: "li"
-      template: _.template($("#item-template").html())
+      tagName: "div"
       events:
         "click .check": "toggleDone"
         "dblclick div.todo-text": "edit"
@@ -92,7 +91,7 @@ $ ->
         @model.bind "destroy", @remove, this
 
       render: ->
-        $(@el).html @template(@model.toJSON())
+        $(@el).html ich.item_template @model.toJSON()
         @setText()
         this
 
@@ -124,7 +123,6 @@ $ ->
     
     window.AppView = Backbone.View.extend
       el: $todoapp
-      statsTemplate: _.template($("#stats-template").html())
       events:
         "keypress #new-todo": "createOnEnter"
         "keyup #new-todo": "showTooltip"
@@ -138,11 +136,12 @@ $ ->
         Todos.fetch()
 
       render: ->
-        @$("#todo-stats").html @statsTemplate(
+        @$("#todo-stats").html ich.stats_template
           total: Todos.length
           done: Todos.done().length
+          total_word: if Todos.length-Todos.done().length is 1 then 'item' else 'items'
+          done_word: if Todos.done().length is 1 then 'item' else 'items'
           remaining: Todos.remaining().length
-        )
 
       addOne: (todo) ->
         view = new TodoView(model: todo)
