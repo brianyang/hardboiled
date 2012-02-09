@@ -30,7 +30,13 @@ Todo = mongoose.model 'Todo', TodoSchema
 
 Todo.visible_fields = ['text', 'order', 'done']
 
-UserSchema = new Schema({})
+UserSchema = new Schema
+  provider: String
+  id: String
+  email: String
+  name: String
+
+User = mongoose.model 'User', UserSchema
 
 ###
 Mongo Store
@@ -43,70 +49,145 @@ session_store = new mongostore
   url: db_uri
 
 ###
-Mongoose Auth
+Everyauth
 
-For the auth session data.
-- accessible in jade templates as everyauth
-- accessible in express routes as req.user
 ###
-conf = require './conf'
 everyauth = require 'everyauth'
-Promise = everyauth.Promise
-everyauth.debug = true
-User = undefined
+findOrCreateUser = (promise, user) ->
+  User.find
+    provider: user.provider
+    id: user.id
+  , (err, found_user) ->
+    if err
+      promise.fail err
+    else if found_user
+      promise.fulfill found_user
+    else
+      new_user = new User user
+      user.save (err, saved_user) ->
+        if err
+          promise.fail err
+        else
+          promise.fulfill saved_user
+conf = require './lib/conf'
+everyauth.everymodule.findUserById (id, next) ->
+  User.findById id, next
 
-mongooseAuth = require 'mongoose-auth'
+everyauth.openid.myHostname('http://local.host:3000').redirectPath('/').findOrCreateUser (session, userMetadata) ->
+  promise = this.Promise()
+  findOrCreateUser promise,
+    provider: 'openid'
+    id: userMetadata.claimedIdentifier
+    email: userMetadata.email
+    name: userMetadata.fullname
+  promise
 
-UserSchema.plugin mongooseAuth,
-  everymodule:
-    everyauth:
-      User: ->
-        User
+everyauth.facebook.appId(conf.fb.appId).appSecret(conf.fb.appSecret).redirectPath('/').scope('email').findOrCreateUser (session, accessToken, accessTokenExtra, fbUserMetadata) ->
+  promise = this.Promise()
+  findOrCreateUser promise,
+    provider: 'fb'
+    id: fbUserMetadata.id
+    email: fbUserMetadata.email
+    name: fbUserMetadata.name
+  promise
 
-  facebook:
-    everyauth:
-      myHostname: "http://local.host:3000"
-      appId: conf.fb.appId
-      appSecret: conf.fb.appSecret
-      redirectPath: "/"
+everyauth.twitter.consumerKey(conf.twit.consumerKey).consumerSecret(conf.twit.consumerSecret).redirectPath('/').findOrCreateUser (sess, accessToken, accessSecret, twitUser) ->
+  promise = this.Promise()
+  findOrCreateUser promise,
+    provider: 'twit'
+    id: twitUser.id
+    name: twitUser.screen_name
+  promise
 
-  twitter:
-    everyauth:
-      myHostname: "http://local.host:3000"
-      consumerKey: conf.twit.consumerKey
-      consumerSecret: conf.twit.consumerSecret
-      redirectPath: "/"
+everyauth.github.appId(conf.github.appId).appSecret(conf.github.appSecret).redirectPath('/').findOrCreateUser (sess, accessToken, accessTokenExtra, ghUser) ->
+  promise = this.Promise()
+  findOrCreateUser promise,
+    provider: 'github'
+    id: ghUser.id
+    email: ghUser.email
+    name: ghUser.name
+  promise
 
-  password:
-    loginWith: "email"
+everyauth.instagram.appId(conf.instagram.clientId).appSecret(conf.instagram.clientSecret).scope("basic").redirectPath('/').findOrCreateUser (sess, accessToken, accessTokenExtra, hipster) ->
+  promise = this.Promise()
+  findOrCreateUser promise,
+    provider: 'instagram'
+    id: hipster.id
+    email: hipster.email
+    name: hipster.name
+  promise
 
-    everyauth:
-      getLoginPath: "/login"
-      postLoginPath: "/login"
-      loginView: "login.jade"
-      getRegisterPath: "/register"
-      postRegisterPath: "/register"
-      registerView: "register.jade"
-      loginSuccessRedirect: "/"
-      registerSuccessRedirect: "/"
+everyauth.google.fetchOAuthUser((accessToken) ->
+  promise = this.Promise()
+  restler.get 'https://www.googleapis.com/userinfo/email', 
+    query:
+      oauth_token: accessToken
+      alt: 'json'
+  .on 'success',(data, res) ->
+    oauthuser = 
+      email: data.data.email
+    promise.fulfill oauthuser
+  .on 'error', (data, res) ->
+    promise.fail data
+  promise
+).appId(conf.google.clientId).appSecret(conf.google.clientSecret).redirectPath('/').scope('https://www.googleapis.com/auth/userinfo.email').findOrCreateUser (sess, accessToken, extra, googleUser) ->
+  promise = this.Promise()
+  findOrCreateUser promise,
+    provider: 'google'
+    id: googleUser.id
+    email: googleUser.email
+  promise
 
-  github:
-    everyauth:
-      myHostname: "http://local.host:3000"
-      appId: conf.github.appId
-      appSecret: conf.github.appSecret
-      redirectPath: "/"
+everyauth.readability.consumerKey(conf.readability.consumerKey).consumerSecret(conf.readability.consumerSecret).redirectPath('/').findOrCreateUser (sess, accessToken, accessSecret, reader) ->
+  promise = this.Promise()
+  findOrCreateUser promise,
+    provider: 'readability'
+    id: reader.username
+    name: reader.first_name + ' ' + reader.last_name
+  promise
 
-  google:
-    everyauth:
-      myHostname: "http://localhost:3000"
-      appId: conf.google.clientId
-      appSecret: conf.google.clientSecret
-      redirectPath: "/"
-      scope: "https://www.google.com/m8/feeds"
 
-mongoose.model "User", UserSchema
-User = mongoose.model("User")
+everyauth.linkedin.consumerKey(conf.linkedin.apiKey).consumerSecret(conf.linkedin.apiSecret).redirectPath('/').findOrCreateUser (sess, accessToken, accessSecret, linkedinUser) ->
+  promise = this.Promise()
+  findOrCreateUser promise,
+    provider: 'linkedin'
+    id: linkedinUser.id
+    name: linkedinUser.firsName + ' ' + linkedinUser.lastName
+    email: linkedinUser.email
+  promise
+
+everyauth.dropbox.consumerKey(conf.dropbox.consumerKey).consumerSecret(conf.dropbox.consumerSecret).redirectPath('/').findOrCreateUser (sess, accessToken, accessSecret, dropboxUserMetadata) ->
+  promise = this.Promise()
+  findOrCreateUser promise,
+    provider: 'dropbox'
+    id: dropboxUserMetadata.uid
+    name: dropboxUserMetadata.display_name
+  promise
+
+everyauth.tumblr.consumerKey(conf.tumblr.consumerKey).consumerSecret(conf.tumblr.consumerSecret).redirectPath('/').findOrCreateUser (sess, accessToken, accessSecret, tumblrUser) ->
+  promise = this.Promise()
+  findOrCreateUser promise,
+    provider: 'tumblr'
+    id: tumblrUser.name
+    name: tumblrUser.name
+  promise
+
+everyauth.box.apiKey(conf.box.apiKey).redirectPath('/').findOrCreateUser (sess, authToken, boxUser) ->
+  promise = this.Promise()
+  findOrCreateUser promise,
+    provider: 'box'
+    id: boxUser.id
+    email: boxUser.user_email
+  promise
+
+everyauth.evernote.oauthHost(conf.evernote.oauthHost).consumerKey(conf.evernote.consumerKey).consumerSecret(conf.evernote.consumerSecret).redirectPath('/').findOrCreateUser (sess, accessToken, accessTokenExtra, enUserMetadata) ->
+  promise = this.Promise()
+  findOrCreateUser promise,
+    provider: 'evernote'
+    id: enUserMetadata.userId
+    name: enUserMetadata.userId
+  promise
+
 
 
 ###
@@ -121,7 +202,7 @@ app = express.createServer express.bodyParser(), express.methodOverride(), expre
     store: session_store
     cookie:
       maxAge: 86400000 * 14
-  }), mongooseAuth.middleware()
+  }), everyauth.middleware()
 
 app.configure ->
   app.set "views", __dirname + "/views"
@@ -141,7 +222,8 @@ app.configure "development", ->
 app.configure "production", ->
   app.use express.errorHandler()
 
-mongooseAuth.helpExpress app
+everyauth.helpExpress app
+
 
 ###
 NowJS
@@ -252,10 +334,6 @@ app.get "/demo",redirect_if_logged_in, (req, res, next) ->
 
 app.get "/dashboard", must_be_logged_in, (req, res, next) ->
   res.render 'dashboard'
-
-app.get "/logout", (req, res) ->
-  req.logout()
-  res.redirect "/"
 
 ###
 Wrap Up

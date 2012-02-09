@@ -13,6 +13,8 @@ a(href='/').brand Hardboiled
         p.navbar-text Logged in as 
           - if (everyauth.user.email)
             = everyauth.user.email
+          - else if (everyauth.user.name)
+            = everyauth.user.name
           - if (everyauth.facebook)
             = JSON.stringify(everyauth.facebook.user)
           - if (everyauth.twitter)
@@ -31,6 +33,4 @@ a(href='/').brand Hardboiled
         a(href='/demo') Demo
     ul.nav.pull-right
       li
-        a(href='/register') Register
-      li
-        a(href='/login') Login
+        a(href='#') Login

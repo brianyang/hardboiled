@@ -3,7 +3,15 @@ include navbar
   .hero-unit
     h1 Hello, world!
     p This is a template for a simple marketing or informational website. It includes a large callout called the hero unit and three supporting pieces of content. Use it as a starting point to create something more unique.
-    a(href='/register').btn.btn-primary.btn-large Register &raquo;
+    .row
+      a(href='/auth/facebook')
+        img(src='http://github.com/intridea/authbuttons/raw/master/png/facebook_64.png')
+      a(href='/auth/twitter')
+        img(src='http://github.com/intridea/authbuttons/raw/master/png/twitter_64.png')
+      a(href='/auth/github')
+        img(src='http://github.com/intridea/authbuttons/raw/master/png/github_64.png')
+      a(href='/auth/google')
+        img(src='http://github.com/intridea/authbuttons/raw/master/png/google_64.png')
   .row
     .span4
       h2 Heading
