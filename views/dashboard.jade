@@ -1,51 +1,46 @@
-!= css('lib/todos.css')
-
 include navbar-fluid
-.container-fluid
+.container-fluid#todoapp
   .row-fluid
-    
-    #todoapp
-      .title
-        h1 Todos
-      .content
-        #create-todo
-          input#new-todo(placeholder='What needs to be done?', type='text')
-          span.ui-tooltip-top(style='display:none') Press Enter to save this task
-        #todos
-          ul#todo-list
-        #todo-stats
-    
-    ul#instructions
-      li Double-click to edit a todo.
-    
-    #credits Created by
-      br
-      a(href='http://jgn.me/') J&eacute;r&ocirc;me Gravel-Niquet
+    .span12
+      .hero-unit
+        .title
+          h1 Todos
+  .row-fluid
+    .span3
+      #create-todo
+        input#new-todo(placeholder='What needs to be done?', type='text')
+        span.ui-tooltip-top(style='display:none') Press Enter to save this task
+    .span9
+      #todos
+        #todo-list
+      #todo-stats
     
 // Templates
 
-script(type='text/template', id='item-template')
-  | <div class="todo <%= done ? 'done' : '' %>">
-  .display
-    | <input type="checkbox" class="check" <%= done ? 'checked="checked"' : '' %> />
-    .todo-text
-    span.todo-destroy
+script(type='text/html', id='item_template')
+  .row-fluid.todo(class="{{#done}}done{{/done}}")
+    .display
+      .span1
+        | <input class="check" type="checkbox" {{#done}}checked="checked"{{/done}} />
+      .span7
+        .todo-text
+      .span1
+        span.todo-destroy
 
-  .edit
-    input.todo-input(type='text')
-  | </div>
+    .edit
+      input.todo-input(type='text')
 
-script(type='text/template', id='stats-template')
-  | <% if (total) { %>
+script(type='text/html', id='stats_template')
+  | {{#total}}
   span.todo-count
-    span.number <%= remaining %> 
-    span.word <%= remaining == 1 ? 'item' : 'items' %> 
+    span.number {{remaining}} 
+    span.word {{total_word}} 
     | left.
-  | <% } %>
-  | <% if (done) { %>
+  | {{/total}}
+  | {{#done}}
   span.todo-clear
     a(href='#') Clear 
-      span.number-done <%= done %> 
+      span.number-done {{done}} 
       | completed 
-      span.word-done <%= done == 1 ? 'item' : 'items' %>
-  | <% } %>
+      span.word-done {{done_word}} 
+  | {{/done}}
