@@ -11,18 +11,7 @@ a(href='/').brand Hardboiled
     ul.nav.pull-right
       li
         p.navbar-text Logged in as 
-          - if (everyauth.user.email)
-            = everyauth.user.email
-          - else if (everyauth.user.name)
-            = everyauth.user.name
-          - if (everyauth.facebook)
-            = JSON.stringify(everyauth.facebook.user)
-          - if (everyauth.twitter)
-            = JSON.stringify(everyauth.twitter.user)
-          - if (everyauth.github)
-            = JSON.stringify(everyauth.github.user)
-          - if (everyauth.google)
-            = JSON.stringify(everyauth.google.user)
+          = JSON.stringify(everyauth)
       li
         a(href='/logout') Logout
   - else
