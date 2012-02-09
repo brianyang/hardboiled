@@ -148,7 +148,9 @@ NowJS
 
 ###
 nowjs = require 'now'
-everyone = nowjs.initialize app
+everyone = nowjs.initialize app,
+  socketio:
+    transports: ['xhr-polling']
 
 get_owner_id = (from_user) -> if from_user.session and from_user.session.auth then from_user.session.auth.userId else from_user.cookie['connect.sid']
 
