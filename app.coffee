@@ -33,7 +33,9 @@ Todo.visible_fields = ['text', 'order', 'done']
 UserSchema = new Schema
   provider: String
   pid: String
-  email: String
+  email:
+    type: String
+    unique: false
   name: String
 
 User = mongoose.model 'User', UserSchema
