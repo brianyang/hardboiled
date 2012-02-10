@@ -1,20 +1,58 @@
 .container
-  .hero-unit
-    h1 Hello, world!
-    p This is a template for a simple marketing or informational website. It includes a large callout called the hero unit and three supporting pieces of content. Use it as a starting point to create something more unique.
+  .carousel#hero-carousel
+    .carousel-inner
+      .item.active
+        .row.hero-unit.vertical-hero-unit
+          .span5.offset1
+            h1 Hello, world!
+            p This is a template for a simple marketing or informational website. It includes a large callout called the hero unit and three supporting pieces of content. Use it as a starting point to create something more unique.
+            ul
+              li 
+                p Chicks
+              li 
+                p Dig
+              li 
+                p Cats
+          .span5
+            img(src='//placekitten.com/g/470/300')
+      .item
+        .row.hero-unit.vertical-hero-unit
+          .span5.offset1
+            h1 Hello, again.
+            p This is a template for a simple marketing or informational website. It includes a large callout called the hero unit and three supporting pieces of content. Use it as a starting point to create something more unique.
+            ul
+              li 
+                p Chicks
+              li 
+                p Dig
+              li 
+                p Cats
+          .span5
+            img(src='//placekitten.com/g/470/298')
+    a.carousel-control.left(href='#hero-carousel', data-slide='prev') &lsaquo;
+    a.carousel-control.right(href='#hero-carousel', data-slide='next') &rsaquo;
   .row
     .span4
+      img(src='//placekitten.com/g/370/199')
       h2 Heading
-      p Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Etiam porta sem malesuada magna mollis euismod. Donec sed odio dui.
+      p 
+        b Donec id elit non mi porta gravida at eget metus. 
+        | Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Etiam porta sem malesuada magna mollis euismod. Donec sed odio dui.
       p
         a.btn(href='#') View details &raquo;
     .span4
+      img(src='//placekitten.com/g/370/200')
       h2 Heading
-      p Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Etiam porta sem malesuada magna mollis euismod. Donec sed odio dui.
+      p 
+        b Donec id elit non mi porta gravida at eget metus. 
+        | Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Etiam porta sem malesuada magna mollis euismod. Donec sed odio dui.
       p
         a.btn(href='#') View details &raquo;
     .span4
+      img(src='//placekitten.com/g/370/201')
       h2 Heading
-      p Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Etiam porta sem malesuada magna mollis euismod. Donec sed odio dui.
+      p 
+        b Donec id elit non mi porta gravida at eget metus. 
+        | Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Etiam porta sem malesuada magna mollis euismod. Donec sed odio dui.
       p
         a.btn(href='#') View details &raquo;

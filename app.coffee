@@ -337,6 +337,10 @@ app.get "/dashboard", must_be_logged_in, (req, res, next) ->
   res.render 'dashboard',
     layout: 'layout-fluid'
 
+app.get '*', (req, res, next) ->
+  res.statusCode = 404
+  res.render '404'
+
 ###
 Wrap Up
 

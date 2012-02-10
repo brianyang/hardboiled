@@ -35,6 +35,14 @@ $ ->
         $t.addClass 'active'
 
   ###
+  Carousel
+
+  ###
+  $hero_carousel = $ '#hero-carousel'
+  $hero_carousel.carousel
+    interval: 5000
+
+  ###
   Todo list
 
   ###
