@@ -71,7 +71,7 @@ everyauth = require 'everyauth'
 findOrCreateUser = (promise, user) ->
   User.findOne
     provider: user.provider
-    pid: user.id
+    pid: user.pid
   , (err, found_user) ->
     if err
       promise.fail err
@@ -167,7 +167,7 @@ everyauth.linkedin.consumerKey(conf.linkedin.apiKey).consumerSecret(conf.linkedi
   findOrCreateUser promise,
     provider: 'linkedin'
     pid: linkedinUser.id
-    name: linkedinUser.firsName + ' ' + linkedinUser.lastName
+    name: linkedinUser.firstName + ' ' + linkedinUser.lastName
     email: linkedinUser.email
   promise
 
