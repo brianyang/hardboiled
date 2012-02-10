@@ -352,9 +352,20 @@ app.get "/dashboard", must_be_logged_in, (req, res, next) ->
   res.render 'dashboard',
     layout: 'layout-fluid'
 
+###
+Error Handling Routes
+
+###
 app.get '*', (req, res, next) ->
   res.statusCode = 404
-  res.render '404'
+  res.render 'error',
+    layout: 'layout-min'
+
+app.error (err, req, res, next) ->
+  log_err err
+  res.statusCode = 500
+  res.render 'error',
+    layout: 'layout-min'
 
 ###
 Wrap Up
