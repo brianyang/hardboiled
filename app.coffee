@@ -1,10 +1,25 @@
 ###
+Error Handling
+
+Catch uncaught errors
+###
+log_err = (err) ->
+  to_output = '-----------------------------\n'
+  to_output+= 'COMPLETE:\n ' + util.inspect err
+  if typeof(err) is 'object' and err.stack
+    to_output+='\nSTACK:\n' + err.stack
+  to_output+= '\n-----------------------------'
+  console.log to_output
+process.on 'uncaughtException', log_err
+
+###
 Utilities
 
-underscore, restler
+underscore, restler, util
 ###
 restler = require 'restler'
 _ = require 'underscore'
+util = require 'util'
 
 
 ###
