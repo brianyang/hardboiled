@@ -1,16 +1,33 @@
 @import "lib/bootstrap.min.css"
 @import "nib"
 
+// Sections
+section
+  padding-top 60px
+
+// TODO App hiding/showing and crossing tasks through
+#todoapp
+  .edit
+    display none
+  .editing .edit
+    display block
+  .display
+    display block
+  .editing .display
+    display none
+  .done .todo-text
+    text-decoration line-through
+
 // Body padding for fixed navigation on Bootstrap
 @media (min-width:981px)
   body
     padding-top 40px
 
-// Vertical Hero Unit for not screwing up left/right positioning
-.vertical-hero-unit
-  padding 60px 0
+// SubtlePatterns.com background
+body
+  background url('/img/subtle-patterns/pinstripe.png')
 
-// Social Icons for everyauth
+// Glyphicons.com social icons
 [class^="icon-social-"]
   height 14px
   width 14px
@@ -29,17 +46,3 @@
   background url(/img/social-icons/glyphicons_346_google_plus.png)
 .icon-social-readability
   background url(/img/social-icons/glyphicons_349_readability.png)
-
-
-// TODO App hiding/showing and crossing tasks through
-#todoapp
-  .edit
-    display none
-  .editing .edit
-    display block
-  .display
-    display block
-  .editing .display
-    display none
-  .done .todo-text
-    text-decoration line-through

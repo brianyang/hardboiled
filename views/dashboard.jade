@@ -1,17 +1,17 @@
 .container-fluid#todoapp
-  .row-fluid
-    .span6
-      .hero-unit
-        h1 Todos
-    .span6
-      #todos
-        table.table.table-striped.table-condensed#todo-list
-      #create-todo
-        .input-prepend
-          span.add-on
-            i.icon-pencil
-          input.span6#new-todo(placeholder='What needs to be done?', type='text')
-      #todo-stats
+    .page-header
+      h1 Todo Sample App
+    .row-fluid
+      .span12
+        #create-todo
+          .input-prepend
+            span.add-on
+              i.icon-pencil
+            input.span6#new-todo(placeholder='What needs to be done?', type='text')
+        .well
+          #todos
+            table.table.table-striped.table-condensed#todo-list
+          #todo-stats
     
 // Templates
 
